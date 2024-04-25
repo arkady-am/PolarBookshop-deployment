@@ -2,6 +2,7 @@ services:
 
   catalog-service:
     depends_on:
+      - polar-config
       - polar-postgres
     image: "catalog-service"
     container_name: "catalog-service"
@@ -13,6 +14,8 @@ services:
       - BPL_DEBUG_ENABLED=true
       - BPL_DEBUG_PORT=8001
       - SPRING_DATASOURCE_URL=jdbc:postgresql://polar-postgres:5432/polardb_catalog
+      - SPRING_CLOUD_CONFIG_URI=polar-config:8888
+      # - SPRING_CLOUD_CONFIG_FAIL_FAST=true
       - SPRING_PROFILES_ACTIVE=testdata
 
   polar-postgres:
@@ -24,3 +27,13 @@ services:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=polardb_catalog
+
+  polar-config:
+    image: "config-service"
+    container_name: "polar-config"
+    ports:
+      - 8888:8888
+    environment:
+      - BPL_JVM_THREAD_COUNT=25
+      - BPL_DEBUG_ENABLED=true
+      - BPL_DEBUG_PORT=8002
